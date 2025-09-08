@@ -12,6 +12,7 @@ namespace AppBlazor.Entities
         public string titulo { get; set; } = null!;
         public string resumen { get; set; } = string.Empty;
         public string nombreTipoLibro { get; set; }
+        public string imagen { get; set; } = "/img/default.png";
 
     }
 }

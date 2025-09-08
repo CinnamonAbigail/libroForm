@@ -34,7 +34,7 @@ namespace AppBlazor.Client.Services
                 {
                     idLibro = obj.idLibro,
                     titulo = obj.titulo,
-                    resumen = "Resumen",
+                    resumen = "ResumenResumenResumenResumenResumen",
                     idTipoLibro = tipolibroservice.ObtenerIdTipoLibro(obj.nombreTipoLibro) // Usamos el nuevo método para obtener el ID
                 };
             }
@@ -43,8 +43,6 @@ namespace AppBlazor.Client.Services
                 return new LibroFormCLS();
             }
         }
-
-
 
 
         public void guardarLibro(LibroFormCLS oLibroFormCLS)
@@ -56,12 +54,11 @@ namespace AppBlazor.Client.Services
                     titulo = oLibroFormCLS.titulo,
                     nombreTipoLibro = tipolibroservice.ObtenerTipoLibro(oLibroFormCLS.idTipoLibro)
                 });
-            
         }
 
-        public void actualizarLibro(LibroFormCLS libro)
+        public void actualizarLibro(LibroFormCLS oLibroFormCLS) //LibroFormCLS libro
         {
-            var libroExistente = lista.FirstOrDefault(l => l.idLibro == libro.idLibro);
+            /*var libroExistente = lista.FirstOrDefault(l => l.idLibro == libro.idLibro);
 
             if (libroExistente != null)
             {
@@ -71,10 +68,27 @@ namespace AppBlazor.Client.Services
             else
             {
                 throw new Exception("Libro no encontrado para actualizar.");
+            }*/
+            if (oLibroFormCLS.idLibro == 0)
+            {
+                int idLibro = lista.Select(p => p.idLibro).Max() + 1;
+                lista.Add(new LibroListCLS
+                {
+                    idLibro = idLibro,
+                    titulo = oLibroFormCLS.titulo,
+                    nombreTipoLibro = tipolibroservice.ObtenerTipoLibro(oLibroFormCLS.idTipoLibro)
+                });
+            }
+            else
+            {
+                var obj = lista.Where(p => p.idLibro == oLibroFormCLS.idLibro).FirstOrDefault();
+                if (obj != null)
+                {
+                    obj.titulo = oLibroFormCLS.titulo;
+                    obj.nombreTipoLibro = tipolibroservice.ObtenerNombreTipoLibro(oLibroFormCLS.idTipoLibro);
+                }
             }
         }
-
-
 
     }
 }
