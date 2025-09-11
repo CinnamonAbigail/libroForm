@@ -75,6 +75,9 @@
 
             //convertir la imagen a base64 para mostrarla omo una URL. Convertir el archivo en texto en base54 para que se pueda mostrar
             imagePreview = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+
+
+            oLibroFormCLS.image = buffer; //asignar el byte[] al objeto oLibroFormCLS
         }
     }
     protected override async Task OnInitializedAsync()
@@ -89,6 +92,10 @@
         {
             titulo = "Editar libro";
             oLibroFormCLS = libroService.recuperarLibroPorId(idlibro);
+            if(oLibroFormCLS.image != null)
+            {
+                imagePreview = $"data:image/png;base64,{Convert.ToBase64String(oLibroFormCLS.image)}";
+            }
         }
     }
 

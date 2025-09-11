@@ -11,8 +11,10 @@ namespace AppBlazor.Entities
         public int idLibro { get; set; }
         public string titulo { get; set; } = null!;
         public string resumen { get; set; } = string.Empty;
-        public string nombreTipoLibro { get; set; }
-        public string imagen { get; set; } = "/img/default.png";
+        public string nombreTipoLibro { get; set; }=string.Empty;
+        //public string imagen { get; set; } = "/img/default.png";
+
+        public byte[]? imagen { get; set; }
 
     }
 }

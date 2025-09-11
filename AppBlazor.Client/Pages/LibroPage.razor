@@ -19,7 +19,10 @@
             @foreach (var item in lista)
             {
                 <tr>
-                    <td><img width="50" height="50" src="@item.imagen"/></td>
+                   
+                    <img width="50" height="50" src="@obtenerImagen(item.imagen)"/>
+                    
+                    
                     <td>@item.idLibro</td>
                     <td>@item.titulo</td>
                     <td>@item.nombreTipoLibro</td>
@@ -41,6 +44,18 @@
     </table>
 }
 @code {
+
+    private string obtenerImagen(byte[] buffer)
+    {
+        if(buffer==null)
+        {
+            return "/img/default.png";
+        }
+        else
+        {
+            return $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
     //Metodos dentro de la directiva CODE
     //metodo navegar
     //hbif

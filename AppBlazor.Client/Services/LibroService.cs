@@ -35,7 +35,7 @@ namespace AppBlazor.Client.Services
                     idLibro = obj.idLibro,
                     titulo = obj.titulo,
                     resumen = "ResumenResumenResumenResumenResumen",
-                    idTipoLibro = tipolibroservice.ObtenerIdTipoLibro(obj.nombreTipoLibro) // Usamos el nuevo método para obtener el ID
+                    idTipoLibro = tipolibroservice.ObtenerIdTipoLibro(obj.nombreTipoLibro), image = obj.imagen // Usamos el nuevo método para obtener el ID
                 };
             }
             else
@@ -47,13 +47,29 @@ namespace AppBlazor.Client.Services
 
         public void guardarLibro(LibroFormCLS oLibroFormCLS)
         {
+            if(oLibroFormCLS.idLibro == 0)
+            {
                 int idLibro = lista.Select(p => p.idLibro).Max() + 1;
                 lista.Add(new LibroListCLS
                 {
                     idLibro = idLibro,
                     titulo = oLibroFormCLS.titulo,
-                    nombreTipoLibro = tipolibroservice.ObtenerTipoLibro(oLibroFormCLS.idTipoLibro)
+                    nombreTipoLibro = tipolibroservice.ObtenerTipoLibro(oLibroFormCLS.idTipoLibro),
+
+                    imagen = oLibroFormCLS.image // Asignar la imagen si está disponible
                 });
+            }
+            else
+            {
+                var obj = lista.Where(p => p.idLibro == oLibroFormCLS.idLibro).FirstOrDefault();
+                if (obj != null)
+                {
+                    obj.titulo = oLibroFormCLS.titulo;
+                    obj.nombreTipoLibro = tipolibroservice.ObtenerNombreTipoLibro(oLibroFormCLS.idTipoLibro);
+                    obj.imagen = oLibroFormCLS.image;
+                }
+            }
+                
         }
 
         public void actualizarLibro(LibroFormCLS oLibroFormCLS) //LibroFormCLS libro
