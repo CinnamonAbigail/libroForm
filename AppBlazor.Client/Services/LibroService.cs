@@ -11,8 +11,8 @@ namespace AppBlazor.Client.Services
         {
             tipolibroservice = _tipolibroservice;
             lista = new List<LibroListCLS>();
-            lista.Add(new LibroListCLS { idLibro= 1, titulo="Libro 1", nombreTipoLibro="Cuento"});
-            lista.Add(new LibroListCLS { idLibro = 2, titulo = "Libro 2", nombreTipoLibro = "Novela" });
+            lista.Add(new LibroListCLS { idLibro= 1, titulo="Libro 1", nombreTipoLibro="Terror"});
+            lista.Add(new LibroListCLS { idLibro = 2, titulo = "Libro 2", nombreTipoLibro = "Romance" });
         }
         public List<LibroListCLS> listarLibros()
         {
@@ -24,7 +24,18 @@ namespace AppBlazor.Client.Services
            lista = listaQueda;
         }
 
-
+        public string recuperarArchivoPorId(int idlibro)
+        {
+            var obj = lista.Where(p => p.idLibro == idlibro).FirstOrDefault();
+            if (obj != null && obj.archivo != null)
+            {
+                return Convert.ToBase64String(obj.archivo);
+            }
+            else
+            {
+                return "";
+            }
+        }
         public LibroFormCLS recuperarLibroPorId(int idlibro)
         {
             var obj = lista.Where(p => p.idLibro == idlibro).FirstOrDefault();
@@ -35,7 +46,8 @@ namespace AppBlazor.Client.Services
                     idLibro = obj.idLibro,
                     titulo = obj.titulo,
                     resumen = "ResumenResumenResumenResumenResumen",
-                    idTipoLibro = tipolibroservice.ObtenerIdTipoLibro(obj.nombreTipoLibro), image = obj.imagen // Usamos el nuevo método para obtener el ID
+                    idTipoLibro = tipolibroservice.ObtenerIdTipoLibro(obj.nombreTipoLibro), 
+                    image = obj.imagen // Usamos el nuevo método para obtener el ID
                 };
             }
             else
@@ -56,7 +68,9 @@ namespace AppBlazor.Client.Services
                     titulo = oLibroFormCLS.titulo,
                     nombreTipoLibro = tipolibroservice.ObtenerTipoLibro(oLibroFormCLS.idTipoLibro),
 
-                    imagen = oLibroFormCLS.image // Asignar la imagen si está disponible
+                    imagen = oLibroFormCLS.image, // Asignar la imagen si está disponible
+                    archivo = oLibroFormCLS.archivo,
+                    nombrearchivo = oLibroFormCLS.nombrearchivo
                 });
             }
             else
@@ -67,6 +81,9 @@ namespace AppBlazor.Client.Services
                     obj.titulo = oLibroFormCLS.titulo;
                     obj.nombreTipoLibro = tipolibroservice.ObtenerNombreTipoLibro(oLibroFormCLS.idTipoLibro);
                     obj.imagen = oLibroFormCLS.image;
+
+                    obj.archivo = oLibroFormCLS.archivo;
+                    obj.nombrearchivo = oLibroFormCLS.nombrearchivo;
                 }
             }
                 
@@ -74,17 +91,6 @@ namespace AppBlazor.Client.Services
 
         public void actualizarLibro(LibroFormCLS oLibroFormCLS) //LibroFormCLS libro
         {
-            /*var libroExistente = lista.FirstOrDefault(l => l.idLibro == libro.idLibro);
-
-            if (libroExistente != null)
-            {
-                libroExistente.titulo = libro.titulo;
-                libroExistente.resumen = libro.resumen;
-            }
-            else
-            {
-                throw new Exception("Libro no encontrado para actualizar.");
-            }*/
             if (oLibroFormCLS.idLibro == 0)
             {
                 int idLibro = lista.Select(p => p.idLibro).Max() + 1;
@@ -102,6 +108,7 @@ namespace AppBlazor.Client.Services
                 {
                     obj.titulo = oLibroFormCLS.titulo;
                     obj.nombreTipoLibro = tipolibroservice.ObtenerNombreTipoLibro(oLibroFormCLS.idTipoLibro);
+                    obj.imagen = oLibroFormCLS.image;
                 }
             }
         }

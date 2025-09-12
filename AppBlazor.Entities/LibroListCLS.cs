@@ -15,6 +15,8 @@ namespace AppBlazor.Entities
         //public string imagen { get; set; } = "/img/default.png";
 
         public byte[]? imagen { get; set; }
+        public byte[]? archivo { get; set; }
+        public string nombrearchivo { get; set; } = string.Empty;
 
     }
 }

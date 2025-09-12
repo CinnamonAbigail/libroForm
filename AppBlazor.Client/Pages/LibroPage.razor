@@ -1,6 +1,7 @@
 ﻿@page "/libro"
 @inject NavigationManager navigationManager
 @inject LibroService libroService
+@inject IJSRuntime JS
 <button @onclick="nuevo" class="btn btn-primary" >Nuevo</button>
 @if(lista != null && lista.Count != 0)
 {
@@ -11,6 +12,7 @@
                 <th>Id</th>
                 <th>Titulo</th>
                 <th>Tipo de Libro</th>
+                <th>Nombre Archivo</th>
 
                 <th>Operaciones</th>
             </tr>
@@ -26,6 +28,8 @@
                     <td>@item.idLibro</td>
                     <td>@item.titulo</td>
                     <td>@item.nombreTipoLibro</td>
+                    <td>@item.nombrearchivo</td>
+                    <td><p @onclick="(()=>descargar(item.idLibro, item.nombrearchivo))" style="cursor:pointer; text-decoration:underline"> @item.nombrearchivo </p></td>
                     <td>
                         <button class="btn btn-primary" @onclick="(()=>recuperarLibro(item.idLibro))">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
@@ -43,8 +47,25 @@
         </tbody>
     </table>
 }
-@code {
 
+<script>
+    function descargarArchivo(base64Data, fileName){
+        var link = document.createElement("a");
+        link.href = "data:application/pdf;base64,"+base64Data;
+        link.download = fileName;
+
+        link.click();
+    }
+</script>
+@code {
+    private async Task descargar(int idlibro,string nombrearchivo)
+    {
+        string archivo = libroService.recuperarArchivoPorId(idlibro);
+        if(archivo != null && archivo.Length > 0)
+        {
+            await JS.InvokeVoidAsync("descargarArchivo", archivo, nombrearchivo);
+        }
+    }
     private string obtenerImagen(byte[] buffer)
     {
         if(buffer==null)
