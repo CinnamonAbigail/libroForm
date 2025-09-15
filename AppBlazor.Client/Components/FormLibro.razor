@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager navigationManager
 @inject LibroService libroService
 @inject TipoLibroService tipoLibroService
+@inject IJSRuntime JS
 
 <h2>@titulo</h2>
 
@@ -46,6 +47,8 @@
     <div class="mt-4">
         <p>Seleccionar el libro a subir</p>
         <InputFile OnChange="HandleFileSelected" accept=".pdf" />
+        <p @onclick="(()=>descargar(oLibroFormCLS.idLibro, oLibroFormCLS.nombrearchivo))"
+        style="cursor:pointer; text-decoration:underline"> @oLibroFormCLS.nombrearchivo</p>
     </div>
 
 
@@ -57,6 +60,15 @@
 </EditForm>
 
 @code {
+    private async Task descargar(int idlibro, string nombrearchivo)
+    {
+        string archivo = libroService.recuperarArchivoPorId(idlibro);
+        if (archivo != null && archivo.Length > 0)
+        {
+            await JS.InvokeVoidAsync("descargarArchivo", archivo, nombrearchivo);
+        }
+    }
+
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         var file = e.File;

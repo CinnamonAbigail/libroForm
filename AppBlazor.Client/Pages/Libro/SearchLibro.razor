@@ -1,0 +1,25 @@
+﻿@inject LibroService libroService
+
+<div class="input-group">
+    <input type="text" class="form-control" placeholder="Ingrese titulo del libro"
+           @bind-value="nombretitulo"
+           @bind-value:event="oninput">
+
+    <button @onclick="buscar" class="btn btn-outline-dark" type="button">Buscar</button>
+    <button @onclick="limpiar" class="btn btn-outline-danger" type="button">Limpiar</button>
+</div>
+
+@code {
+    public string nombretitulo { get; set; } = string.Empty;
+    private async Task limpiar()
+    {
+        nombretitulo = "";
+        await libroService.notificarBusqueda(nombretitulo);
+
+    }
+    private async Task buscar()
+    {
+        await libroService.notificarBusqueda(nombretitulo);
+    }
+
+}

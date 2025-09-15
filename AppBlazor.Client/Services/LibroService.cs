@@ -5,14 +5,23 @@ namespace AppBlazor.Client.Services
 {
     public class LibroService
     {
+        public event Func<string, Task> OnSearch = delegate {  return Task.CompletedTask; };
+
+        public async Task notificarBusqueda(string titulolibro)
+        {
+            if(OnSearch != null)
+            {
+                await OnSearch.Invoke(titulolibro);
+            }
+        }
         private List<LibroListCLS> lista;
         private TipoLibroService tipolibroservice;
         public LibroService(TipoLibroService _tipolibroservice)
         {
             tipolibroservice = _tipolibroservice;
             lista = new List<LibroListCLS>();
-            lista.Add(new LibroListCLS { idLibro= 1, titulo="Libro 1", nombreTipoLibro="Terror"});
-            lista.Add(new LibroListCLS { idLibro = 2, titulo = "Libro 2", nombreTipoLibro = "Romance" });
+            lista.Add(new LibroListCLS { idLibro= 1, titulo="Caperucita Roja", nombreTipoLibro="Terror"});
+            lista.Add(new LibroListCLS { idLibro = 2, titulo = "Don Quijote de la Mancha", nombreTipoLibro = "Romance" });
         }
         public List<LibroListCLS> listarLibros()
         {
@@ -24,6 +33,19 @@ namespace AppBlazor.Client.Services
            lista = listaQueda;
         }
 
+        public List<LibroListCLS> filtrarLibros(string nombretitulo)
+        {
+            List<LibroListCLS> l = listarLibros();
+            if(nombretitulo == "")
+            {
+                return l;
+            }
+            else
+            {
+                List<LibroListCLS> listafiltrada = l.Where(p=> p.titulo.ToUpper().Contains(nombretitulo.ToUpper())).ToList();
+                return listafiltrada;
+            }
+        }
         public string recuperarArchivoPorId(int idlibro)
         {
             var obj = lista.Where(p => p.idLibro == idlibro).FirstOrDefault();
@@ -47,7 +69,8 @@ namespace AppBlazor.Client.Services
                     titulo = obj.titulo,
                     resumen = "ResumenResumenResumenResumenResumen",
                     idTipoLibro = tipolibroservice.ObtenerIdTipoLibro(obj.nombreTipoLibro), 
-                    image = obj.imagen // Usamos el nuevo método para obtener el ID
+                    image = obj.imagen, 
+                    nombrearchivo = obj.nombrearchivo
                 };
             }
             else

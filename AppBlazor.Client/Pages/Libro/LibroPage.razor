@@ -2,7 +2,12 @@
 @inject NavigationManager navigationManager
 @inject LibroService libroService
 @inject IJSRuntime JS
-<button @onclick="nuevo" class="btn btn-primary" >Nuevo</button>
+<div class="mt-3 mb-3">
+    <button @onclick="nuevo" class="btn btn-primary">Nuevo</button>
+</div>
+
+<SearchLibro></SearchLibro>
+
 @if(lista != null && lista.Count != 0)
 {
     <table class="table">
@@ -21,14 +26,16 @@
             @foreach (var item in lista)
             {
                 <tr>
-                   
-                    <img width="50" height="50" src="@obtenerImagen(item.imagen)"/>
+                    <td>
+                        <img width="50" height="50" src="@obtenerImagen(item.imagen)" />
+
+                    </td>
                     
                     
                     <td>@item.idLibro</td>
                     <td>@item.titulo</td>
                     <td>@item.nombreTipoLibro</td>
-                    <td>@item.nombrearchivo</td>
+
                     <td><p @onclick="(()=>descargar(item.idLibro, item.nombrearchivo))" style="cursor:pointer; text-decoration:underline"> @item.nombrearchivo </p></td>
                     <td>
                         <button class="btn btn-primary" @onclick="(()=>recuperarLibro(item.idLibro))">
@@ -49,15 +56,12 @@
 }
 
 <script>
-    function descargarArchivo(base64Data, fileName){
-        var link = document.createElement("a");
-        link.href = "data:application/pdf;base64,"+base64Data;
-        link.download = fileName;
-
-        link.click();
-    }
+    
 </script>
+
 @code {
+
+
     private async Task descargar(int idlibro,string nombrearchivo)
     {
         string archivo = libroService.recuperarArchivoPorId(idlibro);
@@ -77,29 +81,38 @@
             return $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
         }
     }
-    //Metodos dentro de la directiva CODE
-    //metodo navegar
-    //hbif
-    //OtraS VALIDACIONES DE LOS CAMPOS DE LA CLASE CREADA
+
     public List<LibroListCLS> lista { get; set; } = new List<LibroListCLS>();
+
     protected override Task OnInitializedAsync()
     {
-        //lista = libroService.listarLibros();
+        libroService.OnSearch += filtrar;
         listarLibros();
         return base.OnInitializedAsync();
     }
+
+    private Task filtrar(string titulo)
+    {
+        lista = libroService.filtrarLibros(titulo);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
     private void listarLibros()
     {
         lista = libroService.listarLibros();
     }
+
     private void nuevo()
     {
         navigationManager.NavigateTo("/formlibro");
     }
+
     private void recuperarLibro(int idlibro)
     {
         navigationManager.NavigateTo("/formlibro/edit/" + idlibro);
     }
+
     private void eliminarLibro(int idlibro)
     {
         libroService.eliminarLibros(idlibro);
